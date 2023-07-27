@@ -14,61 +14,59 @@ import java.util.Map;
 @RequestMapping("/api")
 public class MemoController {
 
-    private final Map<Long, Memo> memoList = new HashMap<>();   // db와 연결하기 위한 데이터 컬렉션 생성.
+    private final Map<Long, Memo> memoList = new HashMap<>();
 
     @PostMapping("/memos")
     public MemoResponseDto createMemo(@RequestBody MemoRequestDto requestDto) {
+        // RequestDto -> Entity
         Memo memo = new Memo(requestDto);
 
+        // Memo Max ID Check
         Long maxId = memoList.size() > 0 ? Collections.max(memoList.keySet()) + 1 : 1;
         memo.setId(maxId);
 
-        //db에 저장.
+        // DB 저장
         memoList.put(memo.getId(), memo);
 
-        // 엔티티 -> responseDto 변환.
+        // Entity -> ResponseDto
         MemoResponseDto memoResponseDto = new MemoResponseDto(memo);
+
         return memoResponseDto;
     }
 
-    // 메모장 읽기
     @GetMapping("/memos")
     public List<MemoResponseDto> getMemos() {
+        // Map To List
         List<MemoResponseDto> responseList = memoList.values().stream()
                 .map(MemoResponseDto::new).toList();
 
         return responseList;
-
     }
 
-    // Update구현
     @PutMapping("/memos/{id}")
-    public Long updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto){
-        // db에 메모가 있는지 확인.
-        if(memoList.containsKey(id)){
+    public Long updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
+        // 해당 메모가 DB에 존재하는지 확인
+        if(memoList.containsKey(id)) {
+            // 해당 메모 가져오기
             Memo memo = memoList.get(id);
 
-            // 메모를 수정.
+            // memo 수정
             memo.update(requestDto);
             return memo.getId();
-        }
-        else {
-            throw new IllegalArgumentException("선택한 메모는 존재 x.");
+        } else {
+            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
         }
     }
 
-    // Delete 구현
     @DeleteMapping("/memos/{id}")
-    public Long deleteMemo(@PathVariable Long id){
-        // db에 메모가 존재여부 판단.
-        if(memoList.containsKey(id)){
+    public Long deleteMemo(@PathVariable Long id) {
+        // 해당 메모가 DB에 존재하는지 확인
+        if(memoList.containsKey(id)) {
+            // 해당 메모 삭제하기
             memoList.remove(id);
             return id;
-        }
-        else {
-            throw new IllegalArgumentException("메모는 존재하지 x");
+        } else {
+            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
         }
     }
 }
-
-
