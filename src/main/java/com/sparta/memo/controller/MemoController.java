@@ -16,6 +16,7 @@ public class MemoController {
 
     private final Map<Long, Memo> memoList = new HashMap<>();
 
+    // C(Create)게시글 작성.
     @PostMapping("/memos")
     public MemoResponseDto createMemo(@RequestBody MemoRequestDto requestDto) {
         // RequestDto -> Entity
@@ -34,6 +35,7 @@ public class MemoController {
         return memoResponseDto;
     }
 
+    // 게시글 조회, R(Read)
     @GetMapping("/memos")
     public List<MemoResponseDto> getMemos() {
         // Map To List
@@ -43,13 +45,14 @@ public class MemoController {
         return responseList;
     }
 
+    // 게시글 수정, U(Update)
     @PutMapping("/memos/{id}")
     public Long updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
         // 해당 메모가 DB에 존재하는지 확인
+        // 비밀번호 일치여부 확인.
         if(memoList.containsKey(id)) {
             // 해당 메모 가져오기
             Memo memo = memoList.get(id);
-
             // memo 수정
             memo.update(requestDto);
             return memo.getId();
@@ -58,9 +61,11 @@ public class MemoController {
         }
     }
 
+    // 게시글 삭제 , D(Delete)
     @DeleteMapping("/memos/{id}")
     public Long deleteMemo(@PathVariable Long id) {
         // 해당 메모가 DB에 존재하는지 확인
+        // 비밀번호 일치여부 확인.
         if(memoList.containsKey(id)) {
             // 해당 메모 삭제하기
             memoList.remove(id);

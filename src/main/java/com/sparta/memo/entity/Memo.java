@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Memo {
     private Long id;
+    private String title;
     private String username;
     private String contents;
 
